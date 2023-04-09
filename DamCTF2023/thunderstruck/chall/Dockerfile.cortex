@@ -1,0 +1,9 @@
+FROM vertexproject/synapse-cortex:v2.126.0
+
+ENV USERNAME user
+ENV PASSWORD pass
+
+# initialize the cortex
+COPY init_cortex.storm .
+COPY load.sh /vertex/boothooks/concurrent.sh
+RUN chmod +x /vertex/boothooks/concurrent.sh

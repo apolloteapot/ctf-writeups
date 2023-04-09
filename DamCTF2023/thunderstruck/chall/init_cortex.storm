@@ -1,0 +1,6 @@
+[meta:event=* :title="ingest-20230202" :summary="<REDACTED>"]
+[inet:ipv4=9.9.9.9]
+
+// REDACTED, CAN'T LEAK THE SPICE INTEL ;)
+
+fini { $lib.print("initialized!") }

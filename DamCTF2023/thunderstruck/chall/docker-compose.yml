@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 80:5000
+    networks:
+      - appnet
+    depends_on:
+      - cortex
+    restart: unless-stopped
+  
+  cortex:
+    build:
+      context: .
+      dockerfile: Dockerfile.cortex
+    networks:
+      - appnet
+    restart: unless-stopped
+
+networks:
+  appnet:

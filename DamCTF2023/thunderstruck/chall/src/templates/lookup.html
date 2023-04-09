@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form method="post">
+    <div class="row justify-content-lg-center">
+        <div class="col col-md-3">
+            <label for="username">Indicator</label>
+            <input type="text" id="indicator" name="query" class="form-control" style="margin-bottom: 12px">
+        </div>
+    </div>
+    <div class="row justify-content-lg-center">
+        <div class="col col-md-auto">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </div>
+</form>
+<br />
+
+{% if indicator is defined %}
+
+<p>
+    Results for <b>{{ indicator }}</b>
+</p>
+<p>
+    {% if good_lookup %}
+        {% if found %}
+            <span style="color: orange">Results found, this is a sus indicator!</span>
+        {% else %}
+            <span style="color: green">No results found, dat boi is safe!</span>
+        {% endif %}
+    {% else %}
+        <span style="color: red">Failed to lookup indicator!</span>
+    {% endif %}
+</p>
+
+{% endif %}
+{% endblock %}

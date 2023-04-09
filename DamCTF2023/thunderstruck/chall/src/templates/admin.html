@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h3>Admin Center</h3>
+
+<p>
+    There are <b>{{ num_nodes }}</b> nodes in the cortex, most recently created at <b>{{ last_created }}</b>.
+    <table class="table" style="width: fit-content;">
+        <thead>
+            <tr>
+                <th scope="col">Form</th>
+                <th scope="col">Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for form, count in counts.items() %}
+                <tr>
+                    <td>{{ form }}</td>
+                    <td>{{ count }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</p>
+
+<p>
+    The most recent ingest job ran at <b>{{ ingest_ts }}</b>, with the following code:
+    <pre style="background-color: lightgray; padding-left: 2em; padding-right: 2em; color: black; display: block; width: fit-content;"><code>
+{{ ingest_code }}
+    </code></pre>
+</p>
+
+<p>
+    Run a new ingest job on the remote CSV:
+    <br />
+    <b>BROKEN :(</b>
+</p>
+
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h3>Welcome to Thunderstruck, the easy IOC lookup tool!</h3>
+
+<p>
+    Thunderstruck can help you check if different IOCs (IPv4, MD5, SHA1, SHA256, or SHA512) are malicious! Just use our simple lookup tool to validate your IOCs today!
+</p>
+
+<p style="text-align: center;">
+    <img src="{{ url_for('static', filename='nice.gif') }}">
+</p>
+
+<p>
+    Thunderstruck is powered by <a href="https://github.com/vertexproject/synapse-quickstart">Synapse</a>.
+</p>
+{% endblock %}
