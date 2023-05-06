@@ -81,15 +81,13 @@ FLAG{7he_sec0nd_f1a9_1s_w41t1n9_f0r_y0u!}
 
 ## Flag B
 
-Now we need read the environment variables of the webapp process to get flag B. I didn't find any known vulnerability of ImageMagick that would allow RCE, so I attempted to get the flag by fetching the `/proc/{pid}/environ` file with our previous method. 
-
-In `process_image.rs`, the `magick` command is used by spawning a new process, so reading `/proc/self/environ` wouldn't work since it's not the same process as the webapp. The webapp process has a process ID of 1 because it's the starting process of the Docker container, so the flag should be in `/proc/1/environ`. We can check that it indeed contains the flag by spinning up a local Docker container and exploring it as root:
+Now we need read the environment variables of the webapp process to get flag B. I didn't find any known vulnerability of ImageMagick that would allow RCE, so I attempted to get the flag by fetching the `/proc/self/environ` file with our previous method. It should also be in `/proc/1/environ`, since the webapp process has a process ID of 1 because it's the starting process of the Docker container. We can check that it indeed contains the flag by spinning up a local Docker container and exploring it:
 
 ![](img/b_environ.png)
 
-However, fetching `/proc/1/environ` with the previous exploit returned nothing, likely because the magick binary didn't have enough permission to read it unlike `/flag_A`.
+However, both of them returned nothing for some reason. (Edit: After reading the [official writeup](https://github.com/wani-hackase/wanictf2023-writeup/tree/main/web/certified2), I found out that it was because `/proc/self/environ` has an apparent size of 0, and the ImageMagick cannot read it because of that.)
 
-At this point I decided to read the source code of the challenge to check for other possible vulnerabilities. Eventually, I noticed something strange in the code of the POST `/create` endpoint, which processes and converts our uploaded image.
+At that point I decided to read the source code of the challenge to check for other possible vulnerabilities. Eventually, I noticed something strange in the code of the POST `/create` endpoint, which processes and converts our uploaded image.
 
 In the `handle_create()` function of `create.rs`, our uploaded file is first saved in `/data/{uuid}/{filename}`, where {uuid} is an random UUID and {filename} is taken from our form parameter. Then, in the `process_image()` function of `process_image.rs`, it is copied once more to `/data/{uuid}/input`, which seems redundant.
 
@@ -117,9 +115,7 @@ We also notice that in the first case, the `file_name()` method of `std::path::P
 
 For example, if we submit an image with `/proc/self/environ` as filename, our image will first be copied to `/data/{uuid}/environ` (with the filename properly sanitized), but then the contents of `/proc/self/environ` will be copied to `/data/{uuid}/input`, since `file_name()` is not called!
 
-In that case, `/proc/self/environ` should contain the flag since the webapp process itself is executing the copy. If we then use `/data/{uuid}/input` with the CVE PoC, there's a chance that the magick binary will be able to read it since it's not in `/proc` anymore.
-
-Let's try uploading an arbitrary image and intercept with Burp Suite to change the filename (Note: `../../proc/self/environ` also works). 
+If we then use `/data/{uuid}/input` with the CVE PoC, the magick binary will be able to read it since its apparent size won't be anymore. Let's try uploading an arbitrary image and intercept with Burp Suite to change the filename (Note: `../../proc/self/environ` also works). 
 
 ![](img/b_burp.png)
 
